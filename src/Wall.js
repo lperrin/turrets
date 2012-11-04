@@ -15,12 +15,6 @@ function Wall(options) {
 Wall.inherit(Unit, {
   name: 'wall',
 
-  distance: function (loc) {
-    var sub = geo.ccpSub(loc, this.position)
-    
-    return Math.sqrt(sub.x*sub.x + sub.y*sub.y)
-  },
-
   contains: function (loc) {
     return this.distance(loc) < 56
   }

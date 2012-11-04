@@ -48,7 +48,7 @@ Bullet.inherit(cocos.nodes.Node, {
   testTurretCollision: function () {
     var self = this
     this.parent.children.some(function (t) {
-      if(t.distance && t.distance(self.position) < 38) {
+      if(t.collide && t.collide(self.position)) {
         t.hit(damage)
         self.parent.removeChild(self)
 

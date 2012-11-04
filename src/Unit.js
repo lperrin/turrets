@@ -12,7 +12,7 @@ function Unit(options, Drawing) {
 
   this.status = 'placing'
 
-  this.drawing = new Drawing(options.color, options.rotation)
+  this.drawing = new Drawing(options.color, options.rotation, this)
   this.contentSize = this.drawing.contentSize
   this.addChild(this.drawing)
 
@@ -65,6 +65,16 @@ Unit.inherit(cocos.nodes.Node, {
         rotation = Math.atan2(-sub.y, sub.x) * 180 / Math.PI + 90
 
     this.drawing.rotation = rotation
+  },
+
+  distance: function (loc) {
+    var sub = geo.ccpSub(loc, this.position)
+
+    return Math.sqrt(sub.x*sub.x + sub.y*sub.y)
+  },
+
+  collide: function (loc) {
+    return this.contains(loc)
   }
 })
 

@@ -1,6 +1,5 @@
 "use strict"  // Use strict JavaScript mode
 
-// Pull in the modules we're going to use
 var cocos  = require('cocos2d')   // Import the cocos2d module
   , nodes  = cocos.nodes          // Convenient access to 'nodes'
   , events = require('events')    // Import the events module
@@ -14,27 +13,39 @@ var Layer    = nodes.Layer
   , Director = cocos.Director
 
 var Factory = require('./Factory')
+  , Core = require('./Core')
 
-/**
- * @class Initial application layer
- * @extends cocos.nodes.Layer
- */
 function Turrets () {
-    // You must always call the super class constructor
-    Turrets.superclass.constructor.call(this)
+  // You must always call the super class constructor
+  Turrets.superclass.constructor.call(this)
 
-    this.isMouseEnabled = true
+  this.isMouseEnabled = true
 
-    var factory0 = new Factory(0)
-    factory0.position = ccp(50, 50)
-    this.addChild(factory0)
+  var factory0 = new Factory(0)
+  factory0.position = ccp(50, 50)
+  this.addChild(factory0)
 
-    var factory1 = new Factory(1)
-    factory1.position = ccp(800, 400)
-    this.addChild(factory1)
+  var core0 = new Core()
+  core0.position = ccp(50, 400)
+  this.addChild(core0)
+
+  events.addListener(core0.statusBar, 'destroy', function () {
+    alert('Player Red Wins !')
+  });
+
+  var factory1 = new Factory(1)
+  factory1.position = ccp(800, 630)
+  this.addChild(factory1)
+
+  var core1 = new Core()
+  core1.position = ccp(800, 400)
+  this.addChild(core1)
+
+  events.addListener(core1.statusBar, 'destroy', function () {
+    alert('Player Blue Wins !')
+  });
 }
 
-// Inherit from cocos.nodes.Layer
 Turrets.inherit(Layer, {
   grabbed: null,
 
@@ -78,32 +89,24 @@ Turrets.inherit(Layer, {
   }
 })
 
-/**
- * Entry point for the application
- */
 function main () {
-    // Initialise application
+  var director = Director.sharedDirector
 
-    // Get director singleton
-    var director = Director.sharedDirector
+  events.addListener(director, 'ready', function (director) {
+      var scene = new Scene()
+        , layer = new Turrets()
 
-    // Wait for the director to finish preloading our assets
-    events.addListener(director, 'ready', function (director) {
-        // Create a scene and layer
-        var scene = new Scene()
-          , layer = new Turrets()
+      // Add our layer to the scene
+      scene.addChild(layer)
 
-        // Add our layer to the scene
-        scene.addChild(layer)
+      // Run the scene
+      director.replaceScene(scene)
 
-        // Run the scene
-        director.replaceScene(scene)
+      director.displayFPS = true
+  })
 
-        director.displayFPS = true
-    })
-
-    // Preload our assets
-    director.runPreloadScene()
+  // Preload our assets
+  director.runPreloadScene()
 }
 
 
