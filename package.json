@@ -14,6 +14,7 @@
 
     "dependencies": {
         "jah": "~0.2.2",
-        "cocos2d": "~0.2.0-rc1"
+        "cocos2d": "~0.2.0-rc1",
+        "underscore": "*"
     }
 }

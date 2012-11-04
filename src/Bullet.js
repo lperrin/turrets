@@ -6,6 +6,7 @@ var cocos = require('cocos2d')
   , Vector = require('./Vector')
 
 var velocity = 800
+  , damage = 10
 
 function Bullet(position, angle) {
   Bullet.superclass.constructor.call(this)
@@ -24,7 +25,6 @@ Bullet.inherit(cocos.nodes.Node, {
       , dir = Vector.fromAngle(this.angle)
 
     this.position = pos.add(dir.mult(dt).mult(velocity))
-    /*
     this.ttl -= dt
 
     if(this.ttl <= 0) {
@@ -32,7 +32,6 @@ Bullet.inherit(cocos.nodes.Node, {
 
       return
     }
-    */
 
     if(this.position.x > 1024
       || this.position.x < 0
@@ -48,9 +47,9 @@ Bullet.inherit(cocos.nodes.Node, {
 
   testTurretCollision: function () {
     var self = this
-    this.parent.units.some(function (t) {
-      if(t.distance(self.position) < 38) {
-        t.hit(1)
+    this.parent.children.some(function (t) {
+      if(t.distance && t.distance(self.position) < 38) {
+        t.hit(damage)
         self.parent.removeChild(self)
 
         return true

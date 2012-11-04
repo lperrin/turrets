@@ -25,15 +25,17 @@ function Turrets () {
 
     this.isMouseEnabled = true
 
-    var factory = new Factory()
-    factory.position = ccp(100, 100)
-    this.addChild(factory)
+    var factory0 = new Factory(0)
+    factory0.position = ccp(50, 50)
+    this.addChild(factory0)
+
+    var factory1 = new Factory(1)
+    factory1.position = ccp(800, 400)
+    this.addChild(factory1)
 }
 
 // Inherit from cocos.nodes.Layer
 Turrets.inherit(Layer, {
-  units: [],
-
   grabbed: null,
 
   mouseDown: function (e) {
@@ -73,19 +75,6 @@ Turrets.inherit(Layer, {
 
     if(this.grabbed.mouseDown)
       this.grabbed.mouseDown(loc)
-  },
-
-  removeChild: function(unit) {
-    Turrets.superclass.removeChild.call(this, unit);
-
-    var index = this.units.indexOf(unit);
-    if(index >= 0)
-      this.units.splice(index, 1);
-  },
-
-  spawn: function (unit) {
-    this.addChild(unit)
-    this.units.push(unit)
   }
 })
 

@@ -2,32 +2,28 @@
 
 var cocos = require('cocos2d')
   , geo = require('geometry')
+  , events = require('events')
   , util = require('util')
-  , Health = require('./Health')
+  , _ = require('./underscore')
+  , config = require('./config')
+  , Unit = require('./Unit')
   , Bullet = require('./Bullet')
   , Vector = require('./Vector')
 
-var reloadTime = 1 // s
-  , hp = 5
-  , buildingDuration = 3 // s
+function Turret(options) {
+  Turret.superclass.constructor.call(this, _.extend({}, config.turret, options), Turret.Drawing)
 
-function Turret(color, angle) {
-  Turret.superclass.constructor.call(this)
-
-  this.status = 'placing'
   this.sinceLastShoot = 0
-  this.sinceBuilding = 0
-  this.drawing = new TurretDrawing(color, angle)
-  this.contentSize = this.drawing.contentSize
-  this.addChild(this.drawing)
 
-  this.health = new Health(hp)
-  this.addChild(this.health)
+  var self = this
+  events.addListener(this.statusBar, 'ready', function () {
+    self.status = 'shooting'
+  })
 
   this.scheduleUpdate()
 }
 
-Turret.inherit(cocos.nodes.Node, {
+Turret.inherit(Unit, {
   name: 'turret',
 
   update: function (dt) {
@@ -35,21 +31,12 @@ Turret.inherit(cocos.nodes.Node, {
       case 'shooting':
         this.sinceLastShoot += dt
 
-      if(this.sinceLastShoot >= reloadTime) {
+      if(this.sinceLastShoot >= config.turret.reload_time) {
         this.sinceLastShoot = 0
         this.shoot()
       }
 
       break
-
-      case 'building':
-        this.sinceBuilding += dt
-        this.health.setHP(this.sinceBuilding*hp / buildingDuration)
-
-        if(this.health.isMax())
-          this.status = 'shooting'
-
-        break
     }
   },
 
@@ -61,52 +48,34 @@ Turret.inherit(cocos.nodes.Node, {
   },
 
   mouseDown: function (loc) {
+    Turret.superclass.mouseDown.call(this, loc)
+
     switch(this.status) {
       case 'shooting':
         this.status = 'rotating'
-        this.mouseDrag(loc)
-        break
-
-      case 'building':
-        this.status = 'placing'
         this.mouseDrag(loc)
         break
     }
   },
 
   mouseDrag: function (loc) {
+    Turret.superclass.mouseDrag.call(this, loc)
+
     switch(this.status) {
       case 'rotating':
         this.pointTo(loc)
-        break
-
-      case 'placing':
-        this.moveTo(loc)
         break
     }
   },
 
   mouseUp: function () {
+    Turret.superclass.mouseUp.call(this)
+
     switch(this.status) {
       case 'rotating':
         this.status = 'shooting'
         break;
-
-      case 'placing':
-        this.status = 'building'
-        break
     }
-  },
-
-  pointTo: function (loc) {
-    var sub = geo.ccpSub(loc, this.position),
-        angle = Math.atan2(-sub.y, sub.x) * 180 / Math.PI + 90
-
-    this.drawing.rotation = angle
-  },
-
-  moveTo: function (loc) {
-    this.position = loc
   },
 
   distance: function (loc) {
@@ -117,26 +86,14 @@ Turret.inherit(cocos.nodes.Node, {
 
   contains: function (loc) {
     return this.distance(loc) < 56
-  },
-
-  hit: function(dmg) {
-    if(!this.health)
-      return
-
-    this.health.hit(dmg)
-
-    if(this.health.hp <= 0) {
-      this.parent.removeChild(this)
-      this.health = null
-    }      
   }
 })
 
-function TurretDrawing(color, angle) {
-  TurretDrawing.superclass.constructor.call(this, hp)
+function TurretDrawing(color, rotation) {
+  TurretDrawing.superclass.constructor.call(this)
 
   this.color = color
-  this.rotation = angle
+  this.rotation = rotation
   this.contentSize = geo.sizeMake(96, 96)
 }
 
