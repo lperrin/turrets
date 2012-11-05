@@ -9,7 +9,7 @@ module.exports = {
   wall: {
     cost: 10,
     hp: 100,
-    build_duration: 3 
+    build_duration: 3
   },
 
   core: {

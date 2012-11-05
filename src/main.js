@@ -1,12 +1,11 @@
-"use strict"  // Use strict JavaScript mode
+"use strict"
 
-var cocos  = require('cocos2d')   // Import the cocos2d module
-  , nodes  = cocos.nodes          // Convenient access to 'nodes'
-  , events = require('events')    // Import the events module
-  , geo    = require('geometry')  // Import the geometry module
-  , ccp    = geo.ccp              // Short hand to create points
+var cocos  = require('cocos2d')
+  , nodes  = cocos.nodes
+  , events = require('events')
+  , geo    = require('geometry')
+  , ccp    = geo.ccp
 
-// Convenient access to some constructors
 var Layer    = nodes.Layer
   , Scene    = nodes.Scene
   , Label    = nodes.Label
@@ -16,7 +15,6 @@ var Factory = require('./Factory')
   , Core = require('./Core')
 
 function Turrets () {
-  // You must always call the super class constructor
   Turrets.superclass.constructor.call(this)
 
   this.isMouseEnabled = true
@@ -26,11 +24,11 @@ function Turrets () {
   this.addChild(factory0)
 
   var core0 = new Core()
-  core0.position = ccp(50, 400)
+  core0.position = ccp(100, 400)
   this.addChild(core0)
 
   events.addListener(core0.statusBar, 'destroy', function () {
-    alert('Player Red Wins !')
+    alert('Player Blue Wins !')
   });
 
   var factory1 = new Factory(1)
@@ -38,11 +36,11 @@ function Turrets () {
   this.addChild(factory1)
 
   var core1 = new Core()
-  core1.position = ccp(800, 400)
+  core1.position = ccp(900, 400)
   this.addChild(core1)
 
   events.addListener(core1.statusBar, 'destroy', function () {
-    alert('Player Blue Wins !')
+    alert('Player Red Wins !')
   });
 }
 
@@ -96,16 +94,11 @@ function main () {
       var scene = new Scene()
         , layer = new Turrets()
 
-      // Add our layer to the scene
       scene.addChild(layer)
-
-      // Run the scene
       director.replaceScene(scene)
-
-      director.displayFPS = true
+      //director.displayFPS = true
   })
 
-  // Preload our assets
   director.runPreloadScene()
 }
 

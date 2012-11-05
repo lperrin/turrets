@@ -11,6 +11,7 @@ function Unit(options, Drawing) {
   Unit.superclass.constructor.call(this)
 
   this.status = 'placing'
+  this.options = options
 
   this.drawing = new Drawing(options.color, options.rotation, this)
   this.contentSize = this.drawing.contentSize
@@ -21,6 +22,10 @@ function Unit(options, Drawing) {
 
   events.addListener(this.statusBar, 'destroy', function () {
     self.parent.removeChild(self)
+  })
+
+  events.addListener(this.statusBar, 'ready', function () {
+    self.status = 'active'
   })
 }
 

@@ -16,19 +16,35 @@ function Factory(playerId) {
   this.player = config.factory.players[playerId]
   this.contentSize = geo.sizeMake(squareSide*units.length, squareSide)
 
+  this.energy = 30
+  this.energyLbl = new cocos.nodes.Label(this.energy.toString());
+  this.energyLbl.position = geo.ccp(0, 48)
+  this.addChild(this.energyLbl)
+
   units.forEach(function (u, i) {
     var unitFactory = new UnitFactory(u, self.player);
-    unitFactory.position = geo.ccp(i*squareSide, 0)
+    unitFactory.position = geo.ccp(i*squareSide + 32, 0)
     self.addChild(unitFactory)
   });
+
+  this.scheduleUpdate()
 }
 
 Factory.inherit(cocos.nodes.Node, {
+  update: function (dt) {
+    this.energy += dt*config.factory.regen_rate
+    this.energyLbl.string = Math.round(this.energy).toString()
+  },
+
   mouseDown: function (loc) {
-    var i = Math.floor((loc.x - this.position.x)/squareSide)
+    var i = Math.floor((loc.x - this.position.x - 32)/squareSide) + 1
       , unitFactory = this.children[i]
       , unit = unitFactory.spawn()
 
+    if(this.energy < unit.options.cost)
+      return
+
+    this.energy -= unit.options.cost
     unit.position = loc
     this.parent.addChild(unit)
     this.parent.replaceGrabbed(unit)

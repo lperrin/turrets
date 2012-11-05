@@ -14,12 +14,6 @@ function Turret(options) {
   Turret.superclass.constructor.call(this, _.extend({}, config.turret, options), Turret.Drawing)
 
   this.sinceLastShoot = 0
-
-  var self = this
-  events.addListener(this.statusBar, 'ready', function () {
-    self.status = 'shooting'
-  })
-
   this.scheduleUpdate()
 }
 
@@ -28,7 +22,7 @@ Turret.inherit(Unit, {
 
   update: function (dt) {
     switch(this.status) {
-      case 'shooting':
+      case 'active':
         this.sinceLastShoot += dt
 
       if(this.sinceLastShoot >= config.turret.reload_time) {
@@ -51,7 +45,7 @@ Turret.inherit(Unit, {
     Turret.superclass.mouseDown.call(this, loc)
 
     switch(this.status) {
-      case 'shooting':
+      case 'active':
         this.status = 'rotating'
         this.mouseDrag(loc)
         break
@@ -73,7 +67,7 @@ Turret.inherit(Unit, {
 
     switch(this.status) {
       case 'rotating':
-        this.status = 'shooting'
+        this.status = 'active'
         break;
     }
   },
