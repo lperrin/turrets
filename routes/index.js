@@ -1,8 +1,8 @@
+exports.index = function (req, res) {
+  res.render('index', { title: 'Turrets' });
+};
 
-/*
- * GET home page.
- */
-
-exports.index = function(req, res){
-  res.render('index', { title: 'Express' });
+exports.slave = function (req, res) {
+  console.log('slave');
+  res.render('slave', { title: 'Turrets Slave' });
 };

@@ -3,10 +3,12 @@
 var units = [Turret, Wall]
   , squareSide = 96
 
-function Factory(playerId) {
+function Factory(playerId, cursor) {
   Factory.superclass.constructor.call(this)
 
   var self = this
+  this.cursor = cursor
+  this.playerId = playerId
   this.player = config.factory.players[playerId]
   this.contentSize = cc.sizeMake(squareSide*units.length, squareSide)
 
@@ -41,7 +43,7 @@ Factory.inherit(cc.Node, {
     this.energy -= unit.options.cost
     unit.position = loc
     this.parent.addChild(unit)
-    this.parent.replaceGrabbed(unit)
+    this.cursor.replaceGrabbed(unit)
   },
 
   contains: function (loc) {

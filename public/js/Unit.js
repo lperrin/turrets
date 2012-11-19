@@ -6,6 +6,7 @@ function Unit(options, Drawing) {
   Unit.superclass.constructor.call(this)
 
   this.status = 'placing'
+  this.playerId = options.id
   this.options = options
 
   this.drawing = new Drawing(options.color, options.rotation, this)
@@ -48,7 +49,7 @@ Unit.inherit(cc.Node, {
       case 'placing':
         this.status = 'building'
         this.statusBar.build()
-        break 
+        break
     }
   },
 

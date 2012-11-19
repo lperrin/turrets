@@ -3,7 +3,7 @@ var config = {
     cost: 10,
     reload_time: 1,
     hp: 50,
-    build_duration: 3   
+    build_duration: 3
   },
 
   wall: {
@@ -33,10 +33,12 @@ var config = {
   factory: {
     regen_rate: 1,
     players: [{
+      id: 0,
       name: 'Red',
       color: 'rgb(255, 0, 0)',
       rotation: 90
     }, {
+      id: 1,
       name: 'Blue',
       color: 'rgb(0, 0, 255)',
       rotation: 270

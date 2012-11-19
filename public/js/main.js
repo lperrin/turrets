@@ -5,7 +5,10 @@ function Turrets () {
 
   this.isMouseEnabled = true
 
-  var factory0 = new Factory(0)
+  this.red = new Cursor(config.factory.players[0])
+  this.addChild(this.red)
+
+  var factory0 = new Factory(0, this.red)
   factory0.position = cc.ccp(50, 50)
   this.addChild(factory0)
 
@@ -17,7 +20,10 @@ function Turrets () {
     alert('Player Blue Wins !')
   });
 
-  var factory1 = new Factory(1)
+  this.blue = new Cursor(config.factory.players[1])
+  this.addChild(this.blue)
+
+  var factory1 = new Factory(1, this.blue)
   factory1.position = cc.ccp(800, 630)
   this.addChild(factory1)
 
@@ -31,54 +37,43 @@ function Turrets () {
 }
 
 Turrets.inherit(cc.Layer, {
-  grabbed: null,
-
   mouseDown: function (e) {
-    var self = this
-    this.children.some(function (t) {
-      if(!t.contains(e.locationInCanvas))
-        return false
-
-      self.grabbed = t
-
-      if(t.mouseDown)
-        t.mouseDown(e.locationInCanvas)
-
-      return true
-    })
+    this.red.mouseDown(e.locationInCanvas)
   },
 
-  mouseUp: function () {
-    if(this.grabbed) {
-      if(this.grabbed.mouseUp)
-        this.grabbed.mouseUp()
-
-      this.grabbed = null
-    }
+  mouseUp: function (e) {
+    this.red.mouseUp(e.locationInCanvas)
   },
 
   mouseMoved: function (e) {
-    if(this.grabbed && this.grabbed.mouseDrag)
-      this.grabbed.mouseDrag(e.locationInCanvas)
-  },
-
-  replaceGrabbed: function (node, loc) {
-    if(this.grabbed && this.grabbed.mouseUp)
-      this.grabbed.mouseUp()
-
-    this.grabbed = node
-
-    if(this.grabbed.mouseDown)
-      this.grabbed.mouseDown(loc)
+    this.red.mouseMoved(e.locationInCanvas)
   }
 })
 
-function main () {
+function main() {
   var director = cc.Director.sharedDirector
   director.attachInView(document.getElementById('turrets'))
 
-  var scene = new cc.Scene;
-  scene.addChild(new Turrets)
+  var scene = new cc.Scene,
+      socket = io.connect('/'),
+      turrets = new Turrets,
+      blue = turrets.blue;
+
+  scene.addChild(turrets)
+
+  socket.emit('master');
+
+  socket.on('mouseMoved', function (x, y) {
+    blue.mouseMoved(cc.ccp(x, y))
+  });
+
+  socket.on('mouseDown', function (x, y) {
+    blue.mouseDown(cc.ccp(x, y))
+  });
+
+  socket.on('mouseUp', function (x, y) {
+    blue.mouseUp(cc.ccp(x, y))
+  });
 
   director.runWithScene(scene)
 }

@@ -25,7 +25,7 @@ WallDrawing.inherit(cc.Node, {
     context.beginPath()
     context.fillStyle = this.color
     context.fillRect(-48, -10, 96, 20)
-    context.fill()    
+    context.fill()
   }
 })
 
